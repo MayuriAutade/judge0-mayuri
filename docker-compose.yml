@@ -15,15 +15,23 @@ services:
     privileged: true
     <<: *default-logging
     restart: always
+    depends_on:
+      - db
+      - redis
 
   worker:
     image: judge0/judge0:latest
     command: ["./scripts/workers"]
     volumes:
       - ./judge0.conf:/judge0.conf:ro
+      - box:/box/:rw
     privileged: true
     <<: *default-logging
     restart: always
+    depends_on:
+      - db
+      - redis
+      - server
 
   db:
     image: postgres:16.2
@@ -45,3 +53,4 @@ services:
 
 volumes:
   data:
+  box:
